@@ -11,5 +11,8 @@ export const getSocialMediaUrl = (platform: keyof typeof SOCIAL_MEDIA_URLS, hand
   if (platform === 'instagram' && handle.startsWith('@')) {
     return `${baseUrl}${handle.substring(1)}`;
   }
+  if (platform === 'naver') {
+    return `${baseUrl}${handle}`;
+  }
   return `${baseUrl}${handle}`;
 };

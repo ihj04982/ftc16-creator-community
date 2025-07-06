@@ -11,7 +11,7 @@ import {
   CircularProgress,
   InputAdornment,
 } from '@mui/material';
-import { Person, Email, Description, Work, Instagram, YouTube, Home } from '@mui/icons-material';
+import { Person, Email, Description, Work, Instagram, YouTube, Home, Language } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getUserProfile, updateUserProfile, createUserProfile } from '../../services/userService';
@@ -34,6 +34,7 @@ const ProfilePage: React.FC = () => {
       ohouse: '',
       instagram: '',
       youtube: '',
+      naver: '',
     },
   });
 
@@ -63,6 +64,7 @@ const ProfilePage: React.FC = () => {
               ohouse: userProfile.socialMedia?.ohouse || '',
               instagram: userProfile.socialMedia?.instagram || '',
               youtube: userProfile.socialMedia?.youtube || '',
+              naver: userProfile.socialMedia?.naver || '',
             },
           });
         } else {
@@ -77,6 +79,7 @@ const ProfilePage: React.FC = () => {
               ohouse: '',
               instagram: '',
               youtube: '',
+              naver: '',
             },
           });
         }
@@ -161,6 +164,7 @@ const ProfilePage: React.FC = () => {
           ohouse: formData.socialMedia.ohouse.trim(),
           instagram: formData.socialMedia.instagram.trim(),
           youtube: formData.socialMedia.youtube.trim(),
+          naver: formData.socialMedia.naver.trim(),
         },
       };
 
@@ -343,6 +347,24 @@ const ProfilePage: React.FC = () => {
                 startAdornment: (
                   <InputAdornment position="start">
                     <YouTube sx={{ color: '#FF0000' }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 4 }}>
+            <TextField
+              fullWidth
+              label="네이버 블로그"
+              value={formData.socialMedia.naver}
+              onChange={(e) => handleSocialMediaChange('naver', e.target.value)}
+              placeholder="blog_id"
+              helperText="네이버 블로그 ID를 입력하세요 (예: https://blog.naver.com/taeddo25 → taeddo25)"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Language sx={{ color: '#00C73C' }} />
                   </InputAdornment>
                 ),
               }}

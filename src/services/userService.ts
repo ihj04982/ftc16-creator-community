@@ -49,6 +49,7 @@ const convertFirestoreUser = (doc: QueryDocumentSnapshot<DocumentData>): UserPro
       ohouse: '',
       instagram: '',
       youtube: '',
+      naver: '',
     },
     createdAt: data.createdAt?.toDate() || new Date(),
     updatedAt: data.updatedAt?.toDate() || new Date(),

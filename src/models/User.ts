@@ -2,6 +2,7 @@ export interface SocialMedia {
   ohouse?: string; // 오늘의집 ID
   instagram?: string; // 인스타그램 계정
   youtube?: string; // 유튜브 채널
+  naver?: string; // 네이버 블로그 ID
 }
 
 export interface UserProfile {

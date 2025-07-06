@@ -12,7 +12,7 @@ import {
   Button,
 } from '@mui/material';
 import type { UserProfile } from '../../../models/User';
-import { Home, Instagram, YouTube, Edit } from '@mui/icons-material';
+import { Home, Instagram, YouTube, Edit, Language } from '@mui/icons-material';
 import { getSocialMediaUrl } from '../../../utils/getSocialMediaUrl';
 import type { SOCIAL_MEDIA_URLS } from '../../../configs/socialMediaConfigs';
 import { useAuth } from '../../../hooks/useAuth';
@@ -26,7 +26,14 @@ const MemberCard = ({ members }: { members: UserProfile[] }) => {
     const iconProps = {
       sx: {
         fontSize: '20px',
-        color: platform === 'ohouse' ? '#35C5F0' : platform === 'instagram' ? '#E4405F' : '#FF0000',
+        color:
+          platform === 'ohouse'
+            ? '#35C5F0'
+            : platform === 'instagram'
+              ? '#E4405F'
+              : platform === 'youtube'
+                ? '#FF0000'
+                : '#00C73C',
       },
     };
 
@@ -35,13 +42,15 @@ const MemberCard = ({ members }: { members: UserProfile[] }) => {
         <Home {...iconProps} />
       ) : platform === 'instagram' ? (
         <Instagram {...iconProps} />
-      ) : (
+      ) : platform === 'youtube' ? (
         <YouTube {...iconProps} />
+      ) : (
+        <Language {...iconProps} />
       );
 
     return (
       <Tooltip
-        title={`${platform === 'ohouse' ? '오늘의집' : platform === 'instagram' ? '인스타그램' : '유튜브'}에서 보기`}
+        title={`${platform === 'ohouse' ? '오늘의집' : platform === 'instagram' ? '인스타그램' : platform === 'youtube' ? '유튜브' : '네이버 블로그'}에서 보기`}
       >
         <IconButton
           component={Link}
@@ -136,6 +145,7 @@ const MemberCard = ({ members }: { members: UserProfile[] }) => {
                     {member.socialMedia.youtube && (
                       <SocialMediaIcon platform="youtube" handle={member.socialMedia.youtube} />
                     )}
+                    {member.socialMedia.naver && <SocialMediaIcon platform="naver" handle={member.socialMedia.naver} />}
                   </Stack>
 
                   {/* 자신의 카드에만 수정 버튼 표시 */}
