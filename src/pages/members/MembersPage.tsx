@@ -18,8 +18,13 @@ const MembersPage: React.FC = () => {
     const loadMembers = async () => {
       try {
         const users = await getAllUsers();
-        setMembers(users);
-        setFilteredMembers(users);
+        const sortedUsers = users.sort((a, b) => {
+          const dateA = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
+          const dateB = b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
+          return dateB.getTime() - dateA.getTime();
+        });
+        setMembers(sortedUsers);
+        setFilteredMembers(sortedUsers);
       } catch {
         setError('멤버 목록을 불러오는 중 오류가 발생했습니다.');
       }
@@ -40,7 +45,12 @@ const MembersPage: React.FC = () => {
           (member.bio && member.bio.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (member.activityField && member.activityField.toLowerCase().includes(searchTerm.toLowerCase())),
       );
-      setFilteredMembers(filtered);
+      const sortedFiltered = filtered.sort((a, b) => {
+        const dateA = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
+        const dateB = b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
+        return dateB.getTime() - dateA.getTime();
+      });
+      setFilteredMembers(sortedFiltered);
     }
   }, [searchTerm, members]);
 

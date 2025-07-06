@@ -1,74 +1,26 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  Stack,
-  Avatar,
-  Typography,
-  Chip,
-  IconButton,
-  Tooltip,
-  Link,
-  Button,
-} from '@mui/material';
+import { Box, Card, CardContent, Stack, Avatar, Typography, Chip, Button } from '@mui/material';
 import type { UserProfile } from '../../../models/User';
-import { Home, Instagram, YouTube, Edit, Language } from '@mui/icons-material';
-import { getSocialMediaUrl } from '../../../utils/getSocialMediaUrl';
-import type { SOCIAL_MEDIA_URLS } from '../../../configs/socialMediaConfigs';
+import { Edit } from '@mui/icons-material';
 import { useAuth } from '../../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import MemberModal from './MemberModal';
+import SocialMediaIcon from '../../../components/SocialMediaIcon';
 
 const MemberCard = ({ members }: { members: UserProfile[] }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [selectedMember, setSelectedMember] = useState<UserProfile | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  const SocialMediaIcon = ({ platform, handle }: { platform: keyof typeof SOCIAL_MEDIA_URLS; handle: string }) => {
-    const iconProps = {
-      sx: {
-        fontSize: '20px',
-        color:
-          platform === 'ohouse'
-            ? '#35C5F0'
-            : platform === 'instagram'
-              ? '#E4405F'
-              : platform === 'youtube'
-                ? '#FF0000'
-                : '#00C73C',
-      },
-    };
+  const handleCardClick = (member: UserProfile) => {
+    setSelectedMember(member);
+    setDialogOpen(true);
+  };
 
-    const icon =
-      platform === 'ohouse' ? (
-        <Home {...iconProps} />
-      ) : platform === 'instagram' ? (
-        <Instagram {...iconProps} />
-      ) : platform === 'youtube' ? (
-        <YouTube {...iconProps} />
-      ) : (
-        <Language {...iconProps} />
-      );
-
-    return (
-      <Tooltip
-        title={`${platform === 'ohouse' ? '오늘의집' : platform === 'instagram' ? '인스타그램' : platform === 'youtube' ? '유튜브' : '네이버 블로그'}에서 보기`}
-      >
-        <IconButton
-          component={Link}
-          href={getSocialMediaUrl(platform, handle)}
-          target="_blank"
-          rel="noopener noreferrer"
-          size="small"
-          sx={{
-            p: 0.5,
-            '&:hover': {
-              backgroundColor: 'rgba(0, 0, 0, 0.04)',
-            },
-          }}
-        >
-          {icon}
-        </IconButton>
-      </Tooltip>
-    );
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedMember(null);
   };
 
   return (
@@ -92,11 +44,13 @@ const MemberCard = ({ members }: { members: UserProfile[] }) => {
               sx={{
                 height: '100%',
                 transition: 'all 0.2s',
+                cursor: 'pointer',
                 '&:hover': {
                   elevation: 3,
                   transform: 'translateY(-2px)',
                 },
               }}
+              onClick={() => handleCardClick(member)}
             >
               <CardContent sx={{ p: 3 }}>
                 <Stack spacing={2} alignItems="center">
@@ -154,7 +108,10 @@ const MemberCard = ({ members }: { members: UserProfile[] }) => {
                       variant="outlined"
                       size="small"
                       startIcon={<Edit />}
-                      onClick={() => navigate('/profile')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/profile');
+                      }}
                       sx={{
                         mt: 1,
                         borderColor: 'primary.main',
@@ -175,6 +132,14 @@ const MemberCard = ({ members }: { members: UserProfile[] }) => {
           </Box>
         ))}
       </Box>
+      {selectedMember && (
+        <MemberModal
+          member={selectedMember}
+          open={dialogOpen}
+          onClose={handleCloseDialog}
+          handleCloseDialog={handleCloseDialog}
+        />
+      )}
     </div>
   );
 };
