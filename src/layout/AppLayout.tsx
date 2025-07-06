@@ -1,6 +1,11 @@
 import { Link, Outlet } from 'react-router-dom';
 import { Box, AppBar, Toolbar, Typography, IconButton, Button, Container } from '@mui/material';
-import { Notifications as BellIcon, Settings as SettingsIcon, Dashboard as DashboardIcon } from '@mui/icons-material';
+import {
+  Notifications as BellIcon,
+  Settings as SettingsIcon,
+  Dashboard as DashboardIcon,
+  People as PeopleIcon,
+} from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 
 const AppLayout = () => {
@@ -72,6 +77,45 @@ const AppLayout = () => {
                 FTC16 크리에이터 커뮤니티
               </Typography>
             </Box>
+
+            {/* Navigation Menu (Only when user is logged in) */}
+            {user && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  mx: 3,
+                }}
+              >
+                <Button
+                  component={Link}
+                  to="/dashboard"
+                  startIcon={<DashboardIcon />}
+                  sx={{
+                    color: 'text.primary',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  대시보드
+                </Button>
+                <Button
+                  component={Link}
+                  to="/members"
+                  startIcon={<PeopleIcon />}
+                  sx={{
+                    color: 'text.primary',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  멤버
+                </Button>
+              </Box>
+            )}
 
             {/* Action Section */}
             <Box

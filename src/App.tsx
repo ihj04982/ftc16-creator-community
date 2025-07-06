@@ -7,6 +7,8 @@ import HomePage from './pages/HomePage';
 import SigninPage from './pages/SigninPage';
 import SignupPage from './pages/SignupPage';
 import Dashboard from './pages/Dashboard';
+import ProfilePage from './pages/profile/ProfilePage';
+import MembersPage from './pages/members/MembersPage';
 
 // 보호된 라우트 컴포넌트
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -86,6 +88,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="members"
+            element={
+              <ProtectedRoute>
+                <MembersPage />
               </ProtectedRoute>
             }
           />

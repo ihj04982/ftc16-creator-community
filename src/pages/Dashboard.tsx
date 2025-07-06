@@ -53,41 +53,6 @@ const Dashboard = () => {
           </Typography>
         </Box>
 
-        {/* Quick Stats */}
-        <Box
-          sx={{
-            mb: 4,
-            display: 'grid',
-            gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
-            gap: 3,
-          }}
-        >
-          {quickStats.map((stat, index) => (
-            <Card
-              key={index}
-              sx={{
-                textAlign: 'center',
-                p: 2,
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: 3,
-                },
-              }}
-            >
-              <CardContent>
-                <Box sx={{ color: stat.color, mb: 1 }}>{stat.icon}</Box>
-                <Typography variant="h4" component="div" sx={{ fontWeight: 700, color: 'text.primary' }}>
-                  {stat.value}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {stat.label}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-
         <Grid container spacing={4}>
           {/* Main Content */}
           <Grid size={{ xs: 12, lg: 8 }}>
@@ -224,6 +189,41 @@ const Dashboard = () => {
             </Stack>
           </Grid>
         </Grid>
+
+        {/* Quick Stats */}
+        <Box
+          sx={{
+            mb: 4,
+            display: 'grid',
+            gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+            gap: 3,
+          }}
+        >
+          {quickStats.map((stat, index) => (
+            <Card
+              key={index}
+              sx={{
+                textAlign: 'center',
+                p: 2,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: 3,
+                },
+              }}
+            >
+              <CardContent>
+                <Box sx={{ color: stat.color, mb: 1 }}>{stat.icon}</Box>
+                <Typography variant="h4" component="div" sx={{ fontWeight: 700, color: 'text.primary' }}>
+                  {stat.value}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {stat.label}
+                </Typography>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
       </Container>
     </Box>
   );
