@@ -5,6 +5,7 @@ import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   MenuBook as GuideIcon,
+  LocalOffer as TagIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 
@@ -138,6 +139,19 @@ const AppLayout = () => {
                 >
                   크리에이터 가이드
                 </Button>
+                <Button
+                  component={Link}
+                  to="/taggroups"
+                  startIcon={<TagIcon />}
+                  sx={{
+                    color: 'text.primary',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  태그 그룹
+                </Button>
               </Box>
             )}
 
@@ -189,6 +203,19 @@ const AppLayout = () => {
                   }}
                 >
                   <GuideIcon />
+                </IconButton>
+                <IconButton
+                  component={Link}
+                  to="/taggroups"
+                  size="small"
+                  sx={{
+                    color: 'text.primary',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  <TagIcon />
                 </IconButton>
               </Box>
             )}
