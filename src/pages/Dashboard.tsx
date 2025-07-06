@@ -1,11 +1,13 @@
-import { Box, Container, Typography, Grid, Card, CardContent, Button, Avatar, Chip, Paper, Stack } from '@mui/material';
+import { Box, Container, Typography, Grid, Card, CardContent, Button, Paper, Stack } from '@mui/material';
 import {
   People as UsersIcon,
-  MessageOutlined as MessageIcon,
-  TrendingUp as TrendingUpIcon,
-  Event as CalendarIcon,
-  AddCircleOutline as PlusCircleIcon,
   Person as UserIcon,
+  MenuBook as GuideIcon,
+  Feedback as FeedbackIcon,
+  BugReport as BugReportIcon,
+  Lightbulb as LightbulbIcon,
+  ContactSupport as ContactSupportIcon,
+  Launch as LaunchIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -14,37 +16,17 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const recentMembers = [
-    { name: '김민지', specialty: '인테리어 디자인', avatar: 'KM' },
-    { name: '박서준', specialty: '가구 디자인', avatar: 'PS' },
-    { name: '이하늘', specialty: '홈 스타일링', avatar: 'LH' },
-  ];
-
-  const quickStats = [
-    { icon: <UsersIcon sx={{ fontSize: 32 }} />, value: 52, label: '총 멤버', color: 'primary.main' },
-    { icon: <MessageIcon sx={{ fontSize: 32 }} />, value: 127, label: '게시글', color: 'secondary.main' },
-    { icon: <TrendingUpIcon sx={{ fontSize: 32 }} />, value: 15, label: '이번 주 활동', color: 'success.main' },
-    { icon: <CalendarIcon sx={{ fontSize: 32 }} />, value: 3, label: '새 멤버', color: 'accent.main' },
-  ];
-
   const quickActions = [
     { icon: <UsersIcon />, label: '멤버 목록', path: '/members', color: 'primary.main' },
-    { icon: <MessageIcon />, label: '게시판', path: '/board', color: 'secondary.main' },
-    { icon: <PlusCircleIcon />, label: '글쓰기', path: '/board/new', color: 'success.main' },
     { icon: <UserIcon />, label: '내 프로필', path: '/profile', color: 'accent.main' },
-  ];
-
-  const recentActivities = [
-    { text: '새로운 멤버 3명이 가입했습니다', time: '방금 전', color: 'primary.main' },
-    { text: '"인테리어 트렌드 2024" 게시글이 인기입니다', time: '1시간 전', color: 'secondary.main' },
-    { text: '협업 프로젝트 모집 게시글이 등록되었습니다', time: '3시간 전', color: 'success.main' },
+    { icon: <GuideIcon />, label: '크리에이터 가이드', path: '/guide', color: 'secondary.main' },
   ];
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth="md" sx={{ py: 4 }}>
         {/* Welcome Section */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 4, textAlign: 'center' }}>
           <Typography variant="h3" component="h2" gutterBottom sx={{ fontWeight: 700, color: 'text.primary' }}>
             안녕하세요, {user?.displayName || user?.email}님! 👋
           </Typography>
@@ -53,117 +35,53 @@ const Dashboard = () => {
           </Typography>
         </Box>
 
-        <Grid container spacing={4}>
-          {/* Main Content */}
-          <Grid size={{ xs: 12, lg: 8 }}>
-            {/* Quick Actions */}
-            <Card sx={{ mb: 3 }}>
-              <CardContent sx={{ p: 3 }}>
-                <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 600 }}>
-                  빠른 액세스
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  자주 사용하는 기능들을 바로 이용해보세요
-                </Typography>
-                <Grid container spacing={2}>
-                  {quickActions.map((action, index) => (
-                    <Grid size={{ xs: 6, md: 3 }} key={index}>
-                      <Button
-                        variant="outlined"
-                        fullWidth
-                        sx={{
-                          height: 80,
-                          flexDirection: 'column',
-                          gap: 1,
-                          borderColor: 'divider',
-                          color: action.color,
-                          '&:hover': {
-                            borderColor: action.color,
-                            bgcolor: `${action.color}08`,
-                          },
-                        }}
-                        onClick={() => navigate(action.path)}
-                      >
-                        {action.icon}
-                        <Typography variant="body2">{action.label}</Typography>
-                      </Button>
-                    </Grid>
-                  ))}
-                </Grid>
-              </CardContent>
-            </Card>
+        <Stack spacing={4}>
+          {/* Quick Actions */}
+          <Card>
+            <CardContent sx={{ p: 4 }}>
+              <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 600, textAlign: 'center' }}>
+                빠른 액세스
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 4, textAlign: 'center' }}>
+                자주 사용하는 기능들을 바로 이용해보세요
+              </Typography>
+              <Grid container spacing={3} justifyContent="center">
+                {quickActions.map((action, index) => (
+                  <Grid size={{ xs: 12, sm: 4 }} key={index}>
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      sx={{
+                        height: 100,
+                        flexDirection: 'column',
+                        gap: 1.5,
+                        borderColor: 'divider',
+                        color: action.color,
+                        '&:hover': {
+                          borderColor: action.color,
+                          bgcolor: `${action.color}08`,
+                          transform: 'translateY(-2px)',
+                        },
+                        transition: 'all 0.2s ease',
+                      }}
+                      onClick={() => navigate(action.path)}
+                    >
+                      <Box sx={{ fontSize: 32 }}>{action.icon}</Box>
+                      <Typography variant="body2" fontWeight={500}>
+                        {action.label}
+                      </Typography>
+                    </Button>
+                  </Grid>
+                ))}
+              </Grid>
+            </CardContent>
+          </Card>
 
-            {/* Recent Activity */}
-            <Card>
-              <CardContent sx={{ p: 3 }}>
-                <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 600 }}>
-                  최근 활동
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  커뮤니티의 최근 소식을 확인해보세요
-                </Typography>
-                <Stack spacing={2}>
-                  {recentActivities.map((activity, index) => (
-                    <Paper key={index} sx={{ p: 2, bgcolor: 'grey.50' }}>
-                      <Stack direction="row" alignItems="center" spacing={2}>
-                        <Box
-                          sx={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: '50%',
-                            bgcolor: activity.color,
-                          }}
-                        />
-                        <Typography variant="body2" sx={{ flexGrow: 1 }}>
-                          {activity.text}
-                        </Typography>
-                        <Chip label={activity.time} size="small" variant="outlined" sx={{ fontSize: '0.75rem' }} />
-                      </Stack>
-                    </Paper>
-                  ))}
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Sidebar */}
-          <Grid size={{ xs: 12, lg: 4 }}>
-            <Stack spacing={3}>
-              {/* New Members */}
-              <Card>
-                <CardContent sx={{ p: 3 }}>
-                  <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 600 }}>
-                    새로운 멤버
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                    최근에 가입한 크리에이터들을 만나보세요
-                  </Typography>
-                  <Stack spacing={2}>
-                    {recentMembers.map((member, index) => (
-                      <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Avatar sx={{ bgcolor: 'primary.main' }}>{member.avatar}</Avatar>
-                        <Box sx={{ flexGrow: 1 }}>
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                            {member.name}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {member.specialty}
-                          </Typography>
-                        </Box>
-                        <Button variant="text" size="small" sx={{ color: 'primary.main' }}>
-                          팔로우
-                        </Button>
-                      </Box>
-                    ))}
-                  </Stack>
-                  <Button variant="outlined" fullWidth sx={{ mt: 2 }} onClick={() => navigate('/members')}>
-                    모든 멤버 보기
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Quick Tips */}
-              <Card>
+          {/* Two Column Layout for Tips and Feedback */}
+          <Grid container spacing={4}>
+            {/* Quick Tips */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Card sx={{ height: '100%' }}>
                 <CardContent sx={{ p: 3 }}>
                   <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 600 }}>
                     💡 커뮤니티 팁
@@ -179,51 +97,97 @@ const Dashboard = () => {
                     </Paper>
                     <Paper sx={{ p: 2, bgcolor: 'secondary.main', color: 'white' }}>
                       <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
-                        첫 게시글을 작성해보세요
+                        크리에이터 가이드를 확인하세요
                       </Typography>
-                      <Typography variant="caption">인사글이나 작업물을 공유하며 커뮤니티에 참여해보세요</Typography>
+                      <Typography variant="caption">
+                        활동에 필요한 모든 정보와 채널을 한 곳에서 확인할 수 있어요
+                      </Typography>
                     </Paper>
                   </Stack>
                 </CardContent>
               </Card>
-            </Stack>
-          </Grid>
-        </Grid>
+            </Grid>
 
-        {/* Quick Stats */}
-        <Box
-          sx={{
-            mb: 4,
-            display: 'grid',
-            gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
-            gap: 3,
-          }}
-        >
-          {quickStats.map((stat, index) => (
-            <Card
-              key={index}
-              sx={{
-                textAlign: 'center',
-                p: 2,
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: 3,
-                },
-              }}
-            >
-              <CardContent>
-                <Box sx={{ color: stat.color, mb: 1 }}>{stat.icon}</Box>
-                <Typography variant="h4" component="div" sx={{ fontWeight: 700, color: 'text.primary' }}>
-                  {stat.value}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {stat.label}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
+            {/* Feedback & Questions */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Card sx={{ height: '100%' }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 600 }}>
+                    📝 피드백 & 문의
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                    서비스를 더 좋게 만들기 위한 소중한 의견을 들려주세요
+                  </Typography>
+
+                  <Grid container spacing={1.5} sx={{ mb: 3 }}>
+                    <Grid size={{ xs: 6 }}>
+                      <Paper sx={{ p: 1.5, textAlign: 'center', bgcolor: 'primary.main', color: 'white' }}>
+                        <FeedbackIcon sx={{ fontSize: 20, mb: 0.5 }} />
+                        <Typography variant="caption" display="block" fontWeight={500}>
+                          서비스 개선
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                    <Grid size={{ xs: 6 }}>
+                      <Paper sx={{ p: 1.5, textAlign: 'center', bgcolor: 'error.main', color: 'white' }}>
+                        <BugReportIcon sx={{ fontSize: 20, mb: 0.5 }} />
+                        <Typography variant="caption" display="block" fontWeight={500}>
+                          버그 신고
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                    <Grid size={{ xs: 6 }}>
+                      <Paper sx={{ p: 1.5, textAlign: 'center', bgcolor: 'warning.main', color: 'white' }}>
+                        <LightbulbIcon sx={{ fontSize: 20, mb: 0.5 }} />
+                        <Typography variant="caption" display="block" fontWeight={500}>
+                          기능 제안
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                    <Grid size={{ xs: 6 }}>
+                      <Paper sx={{ p: 1.5, textAlign: 'center', bgcolor: 'info.main', color: 'white' }}>
+                        <ContactSupportIcon sx={{ fontSize: 20, mb: 0.5 }} />
+                        <Typography variant="caption" display="block" fontWeight={500}>
+                          기타 문의
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                  </Grid>
+
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    endIcon={<LaunchIcon />}
+                    onClick={() =>
+                      window.open(
+                        'https://docs.google.com/forms/d/e/1FAIpQLSffV1_TwDiuKO6tvJ0lcm1N-g9U1YQT1BuzUfqvWXc93oSiHQ/viewform?usp=header',
+                        '_blank',
+                      )
+                    }
+                    sx={{
+                      bgcolor: '#4285F4',
+                      color: 'white',
+                      py: 1.5,
+                      fontWeight: 600,
+                      '&:hover': {
+                        bgcolor: '#3367D6',
+                      },
+                    }}
+                  >
+                    피드백 제출하기
+                  </Button>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'block', mt: 1, textAlign: 'center' }}
+                  >
+                    익명으로 제출 가능하며, 모든 의견은 서비스 개선에 반영됩니다
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Stack>
       </Container>
     </Box>
   );

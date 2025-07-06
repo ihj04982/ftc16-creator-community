@@ -1,10 +1,10 @@
 import { Link, Outlet } from 'react-router-dom';
 import { Box, AppBar, Toolbar, Typography, IconButton, Button, Container } from '@mui/material';
 import {
-  Notifications as BellIcon,
   Settings as SettingsIcon,
   Dashboard as DashboardIcon,
   People as PeopleIcon,
+  MenuBook as GuideIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 
@@ -44,11 +44,12 @@ const AppLayout = () => {
         <Container maxWidth="lg">
           <Toolbar
             sx={{
-              py: 2,
-              px: 3,
+              py: { xs: 1, md: 2 },
+              px: { xs: 2, md: 3 },
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
+              minHeight: { xs: 56, md: 64 },
             }}
           >
             {/* Logo Section */}
@@ -56,25 +57,35 @@ const AppLayout = () => {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 2,
+                gap: { xs: 1, md: 2 },
+                flexShrink: 0,
               }}
             >
               <DashboardIcon
                 sx={{
                   color: 'primary.main',
-                  fontSize: 28,
+                  fontSize: { xs: 24, md: 28 },
                 }}
               />
               <Typography
-                variant="h5"
+                variant="h6"
                 component="h1"
                 sx={{
                   fontWeight: 700,
                   color: 'text.primary',
                   letterSpacing: '-0.5px',
+                  fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
               >
-                FTC16 크리에이터 커뮤니티
+                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                  FTC16 크리에이터 커뮤니티
+                </Box>
+                <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+                  FTC16
+                </Box>
               </Typography>
             </Box>
 
@@ -82,7 +93,7 @@ const AppLayout = () => {
             {user && (
               <Box
                 sx={{
-                  display: 'flex',
+                  display: { xs: 'none', md: 'flex' },
                   alignItems: 'center',
                   gap: 1,
                   mx: 3,
@@ -114,6 +125,71 @@ const AppLayout = () => {
                 >
                   멤버
                 </Button>
+                <Button
+                  component={Link}
+                  to="/guide"
+                  startIcon={<GuideIcon />}
+                  sx={{
+                    color: 'text.primary',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  크리에이터 가이드
+                </Button>
+              </Box>
+            )}
+
+            {/* Mobile Navigation - Icon Only */}
+            {user && (
+              <Box
+                sx={{
+                  display: { xs: 'flex', md: 'none' },
+                  alignItems: 'center',
+                  gap: 0.5,
+                  mx: 1,
+                }}
+              >
+                <IconButton
+                  component={Link}
+                  to="/dashboard"
+                  size="small"
+                  sx={{
+                    color: 'text.primary',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  <DashboardIcon />
+                </IconButton>
+                <IconButton
+                  component={Link}
+                  to="/members"
+                  size="small"
+                  sx={{
+                    color: 'text.primary',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  <PeopleIcon />
+                </IconButton>
+                <IconButton
+                  component={Link}
+                  to="/guide"
+                  size="small"
+                  sx={{
+                    color: 'text.primary',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  <GuideIcon />
+                </IconButton>
               </Box>
             )}
 
@@ -122,22 +198,10 @@ const AppLayout = () => {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1,
+                gap: { xs: 0.5, md: 1 },
+                flexShrink: 0,
               }}
             >
-              <IconButton
-                size="medium"
-                aria-label="notifications"
-                sx={{
-                  color: 'text.primary',
-                  '&:hover': {
-                    bgcolor: 'action.hover',
-                  },
-                }}
-              >
-                <BellIcon />
-              </IconButton>
-
               <IconButton
                 size="medium"
                 component={Link}
@@ -159,9 +223,11 @@ const AppLayout = () => {
                   size="small"
                   onClick={handleLogout}
                   sx={{
-                    ml: 2,
+                    ml: { xs: 1, md: 2 },
                     borderColor: 'primary.main',
                     color: 'primary.main',
+                    fontSize: { xs: '0.75rem', md: '0.875rem' },
+                    px: { xs: 1, md: 2 },
                     '&:hover': {
                       borderColor: 'primary.dark',
                       bgcolor: 'primary.light',

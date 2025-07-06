@@ -69,19 +69,19 @@ const HomePage = () => {
         <Stack spacing={4}>
           <Paper sx={{ p: 4, borderRadius: 3 }}>
             <Typography variant="h5" gutterBottom>
-              멤버 관리
+              멤버 네트워킹
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              FTC16기 크리에이터들의 정보를 체계적으로 관리하고 소통하세요.
+              FTC16기 크리에이터들의 프로필을 확인하고 소셜 미디어를 통해 소통하세요.
             </Typography>
           </Paper>
 
           <Paper sx={{ p: 4, borderRadius: 3 }}>
             <Typography variant="h5" gutterBottom>
-              커뮤니티 게시판
+              크리에이터 가이드
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              활발한 토론과 정보 공유를 통해 함께 성장하는 공간입니다.
+              오늘의집 크리에이터 활동에 필요한 모든 정보와 카카오톡 채널을 한곳에서 확인하세요.
             </Typography>
           </Paper>
 
@@ -90,7 +90,16 @@ const HomePage = () => {
               프로필 관리
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              개인 프로필을 관리하고 나만의 포트폴리오를 구축하세요.
+              개인 프로필을 관리하고 나만의 포트폴리오를 구축하여 다른 크리에이터들과 연결하세요.
+            </Typography>
+          </Paper>
+
+          <Paper sx={{ p: 4, borderRadius: 3 }}>
+            <Typography variant="h5" gutterBottom>
+              피드백 & 문의
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              서비스 개선 의견, 버그 신고, 기능 제안 등을 쉽게 전달하고 더 나은 커뮤니티를 만들어 나가세요.
             </Typography>
           </Paper>
         </Stack>

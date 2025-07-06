@@ -9,6 +9,7 @@ import SignupPage from './pages/SignupPage';
 import Dashboard from './pages/Dashboard';
 import ProfilePage from './pages/profile/ProfilePage';
 import MembersPage from './pages/members/MembersPage';
+import CreatorGuidePage from './pages/CreatorGuidePage';
 
 // 보호된 라우트 컴포넌트
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -104,6 +105,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <MembersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="guide"
+            element={
+              <ProtectedRoute>
+                <CreatorGuidePage />
               </ProtectedRoute>
             }
           />

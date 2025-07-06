@@ -1,10 +1,27 @@
-import { Box, Card, CardContent, Stack, Avatar, Typography, Chip, IconButton, Tooltip, Link } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  Stack,
+  Avatar,
+  Typography,
+  Chip,
+  IconButton,
+  Tooltip,
+  Link,
+  Button,
+} from '@mui/material';
 import type { UserProfile } from '../../../models/User';
-import { Home, Instagram, YouTube } from '@mui/icons-material';
+import { Home, Instagram, YouTube, Edit } from '@mui/icons-material';
 import { getSocialMediaUrl } from '../../../utils/getSocialMediaUrl';
 import type { SOCIAL_MEDIA_URLS } from '../../../configs/socialMediaConfigs';
+import { useAuth } from '../../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const MemberCard = ({ members }: { members: UserProfile[] }) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   const SocialMediaIcon = ({ platform, handle }: { platform: keyof typeof SOCIAL_MEDIA_URLS; handle: string }) => {
     const iconProps = {
       sx: {
@@ -120,6 +137,28 @@ const MemberCard = ({ members }: { members: UserProfile[] }) => {
                       <SocialMediaIcon platform="youtube" handle={member.socialMedia.youtube} />
                     )}
                   </Stack>
+
+                  {/* 자신의 카드에만 수정 버튼 표시 */}
+                  {user?.uid === member.uid && (
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<Edit />}
+                      onClick={() => navigate('/profile')}
+                      sx={{
+                        mt: 1,
+                        borderColor: 'primary.main',
+                        color: 'primary.main',
+                        '&:hover': {
+                          borderColor: 'primary.dark',
+                          backgroundColor: 'primary.main',
+                          color: 'white',
+                        },
+                      }}
+                    >
+                      프로필 수정
+                    </Button>
+                  )}
                 </Stack>
               </CardContent>
             </Card>
