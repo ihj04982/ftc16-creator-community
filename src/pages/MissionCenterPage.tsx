@@ -22,10 +22,7 @@ import {
   Launch as LaunchIcon,
   TrendingUp as TrendingUpIcon,
   EmojiEvents as TrophyIcon,
-  Schedule as ScheduleIcon,
   Assignment as AssignmentIcon,
-  ArrowBackIos,
-  ArrowForwardIos,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 import {
@@ -34,7 +31,6 @@ import {
   toggleMissionCompletion,
 } from '../services/missionService';
 import type { MissionWithProgress, MissionProgressSummary } from '../models/Mission';
-import Checkbox from '@mui/material/Checkbox';
 
 const MissionCenterPage = () => {
   const { user } = useAuth();
@@ -67,7 +63,7 @@ const MissionCenterPage = () => {
 
   useEffect(() => {
     loadData();
-  }, [user]);
+  }, [user?.uid]);
 
   // 미션 완료 상태 토글
   const handleToggleCompletion = async (missionId: string, week: number) => {
