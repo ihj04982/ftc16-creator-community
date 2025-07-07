@@ -16,6 +16,7 @@ import {
 import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import { db } from '../configs/firebaseConfigs';
 import type { TagGroup, CreateTagGroupData, UpdateTagGroupData, TagGroupApplication } from '../models/TagGroup';
+import { SnsType } from '../models/TagGroup';
 
 const TAG_GROUPS_COLLECTION = 'tagGroups';
 
@@ -26,17 +27,19 @@ const convertFirestoreTagGroup = (doc: QueryDocumentSnapshot<DocumentData>): Tag
     id: doc.id,
     name: data.name || '',
     description: data.description || '',
+    snsType: data.snsType || 'instagram', // 기본값으로 instagram 설정
     createdBy: data.createdBy || '',
+    createdByName: data.createdByName || '',
     createdAt: data.createdAt?.toDate() || new Date(),
     updatedAt: data.updatedAt?.toDate() || new Date(),
     applications:
       data.applications?.map((app: DocumentData) => ({
         userId: app.userId || '',
         userDisplayName: app.userDisplayName || '',
-        userInstagram: app.userInstagram || '',
+        userInstagram: app.userInstagram || '', // 호환성을 위해 유지
+        userSnsAccount: app.userSnsAccount || app.userInstagram || '', // 새 필드, 기존 데이터 호환
         appliedAt: app.appliedAt?.toDate() || new Date(),
       })) || [],
-    isActive: data.isActive !== undefined ? data.isActive : true,
   };
 };
 
@@ -56,12 +59,14 @@ export const createTagGroup = async (
       userId: uid,
       userDisplayName,
       userInstagram,
+      userSnsAccount: userInstagram, // 호환성을 위해 Instagram 계정으로 설정
       appliedAt: new Date(),
     };
 
     await setDoc(tagGroupRef, {
       ...tagGroupData,
       createdBy: uid,
+      createdByName: userDisplayName,
       createdAt: now,
       updatedAt: now,
       applications: [
@@ -113,13 +118,27 @@ export const getAllTagGroups = async (): Promise<TagGroup[]> => {
 export const getActiveTagGroups = async (): Promise<TagGroup[]> => {
   try {
     const tagGroupsRef = collection(db, TAG_GROUPS_COLLECTION);
-    const q = query(tagGroupsRef, where('isActive', '==', true), orderBy('createdAt', 'desc'));
+    const q = query(tagGroupsRef, orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
 
     return querySnapshot.docs.map(convertFirestoreTagGroup);
   } catch (error) {
     console.error('Error getting active tag groups:', error);
     throw new Error('활성 태그 그룹 조회 중 오류가 발생했습니다.');
+  }
+};
+
+// SNS 타입별 활성화된 태그 그룹 조회
+export const getActiveTagGroupsBySnsType = async (snsType: SnsType): Promise<TagGroup[]> => {
+  try {
+    const tagGroupsRef = collection(db, TAG_GROUPS_COLLECTION);
+    const q = query(tagGroupsRef, where('snsType', '==', snsType), orderBy('createdAt', 'desc'));
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map(convertFirestoreTagGroup);
+  } catch (error) {
+    console.error('Error getting active tag groups by SNS type:', error);
+    throw new Error('SNS 타입별 태그 그룹 조회 중 오류가 발생했습니다.');
   }
 };
 
@@ -162,6 +181,7 @@ export const applyToTagGroup = async (
       userId,
       userDisplayName,
       userInstagram,
+      userSnsAccount: userInstagram, // 호환성을 위해 Instagram 계정으로 설정
       appliedAt: new Date(),
     };
 
@@ -228,13 +248,45 @@ export const getUserTagGroupApplications = async (userId: string): Promise<TagGr
   }
 };
 
-// 인스타그램 태그 문자열 생성
+// SNS별 태그/링크 생성
+export const generateSNSTags = (applications: TagGroupApplication[], snsType: SnsType): string => {
+  switch (snsType) {
+    case SnsType.INSTAGRAM:
+      return applications
+        .filter((app) => app.userSnsAccount || app.userInstagram)
+        .map((app) => {
+          const account = app.userSnsAccount || app.userInstagram;
+          return account.startsWith('@') ? account : `@${account}`;
+        })
+        .join(' ');
+
+    case SnsType.YOUTUBE:
+      return applications
+        .filter((app) => app.userSnsAccount)
+        .map((app) => `https://youtube.com/${app.userSnsAccount}`)
+        .join('\n');
+
+    case SnsType.NAVER:
+      return applications
+        .filter((app) => app.userSnsAccount)
+        .map((app) => `https://blog.naver.com/${app.userSnsAccount}`)
+        .join('\n');
+
+    case SnsType.OHOUSE:
+      return applications
+        .filter((app) => app.userSnsAccount)
+        .map((app) => {
+          const nickname = app.userDisplayName;
+          return `${nickname}`;
+        })
+        .join('\n');
+
+    default:
+      return '';
+  }
+};
+
+// 호환성을 위한 기존 함수 유지
 export const generateInstagramTags = (applications: TagGroupApplication[]): string => {
-  return applications
-    .filter((app) => app.userInstagram)
-    .map((app) => {
-      const instagram = app.userInstagram.startsWith('@') ? app.userInstagram : `@${app.userInstagram}`;
-      return instagram;
-    })
-    .join(' ');
+  return generateSNSTags(applications, SnsType.INSTAGRAM);
 };

@@ -25,14 +25,16 @@ import {
   ExpandMore,
   ExpandLess,
   Refresh,
+  Casino,
   PersonAdd,
   PersonRemove,
+  Person,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import {
   getTagGroup,
-  generateInstagramTags,
+  generateSNSTags,
   updateTagGroup,
   deleteTagGroup,
   applyToTagGroup,
@@ -41,6 +43,7 @@ import {
 import { getUserProfile } from '../../services/userService';
 import type { TagGroup } from '../../models/TagGroup';
 import type { UserProfile } from '../../models/User';
+import { SNS_TYPE_LABELS, SNS_TYPE_COLORS } from '../../models/TagGroup';
 
 const TagGroupDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -55,10 +58,10 @@ const TagGroupDetailPage: React.FC = () => {
   const [showApplicants, setShowApplicants] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isApplying, setIsApplying] = useState(false);
+  const [isRandomMode, setIsRandomMode] = useState(false);
   const [editForm, setEditForm] = useState({
     name: '',
     description: '',
-    isActive: true,
   });
 
   // 태그 그룹 및 사용자 프로필 로드
@@ -84,7 +87,6 @@ const TagGroupDetailPage: React.FC = () => {
         setEditForm({
           name: groupData.name,
           description: groupData.description || '',
-          isActive: groupData.isActive,
         });
       } catch (error) {
         setMessage({
@@ -98,14 +100,14 @@ const TagGroupDetailPage: React.FC = () => {
     loadData();
   }, [id, user]);
 
-  // 인스타그램 태그 복사
-  const handleCopyInstagramTags = async () => {
+  // 태그 복태태
+  const handleCopySNSTags = async () => {
     if (!tagGroup || tagGroup.applications.length === 0) {
       setMessage({ type: 'error', text: '복사할 태그가 없습니다.' });
       return;
     }
 
-    const tags = generateInstagramTags(tagGroup.applications);
+    const tags = snsTags;
 
     try {
       await navigator.clipboard.writeText(tags);
@@ -148,7 +150,6 @@ const TagGroupDetailPage: React.FC = () => {
       setEditForm({
         name: tagGroup.name,
         description: tagGroup.description || '',
-        isActive: tagGroup.isActive,
       });
     }
   };
@@ -161,7 +162,6 @@ const TagGroupDetailPage: React.FC = () => {
       await updateTagGroup(tagGroup.id, {
         name: editForm.name,
         description: editForm.description,
-        isActive: editForm.isActive,
       });
 
       // 성공 후 상태 업데이트
@@ -169,7 +169,6 @@ const TagGroupDetailPage: React.FC = () => {
         ...tagGroup,
         name: editForm.name,
         description: editForm.description,
-        isActive: editForm.isActive,
       });
 
       setIsEditing(false);
@@ -182,10 +181,14 @@ const TagGroupDetailPage: React.FC = () => {
     }
   };
 
-  // 태그 재생성 (랜덤 순서 변경)
-  const handleRefreshTags = () => {
-    // 컴포넌트 재렌더링을 위해 강제로 상태 업데이트
-    setTagGroup(tagGroup ? { ...tagGroup } : null);
+  // 랜덤 10명 선택 모드
+  const handleRandomMode = () => {
+    setIsRandomMode(true);
+  };
+
+  // 전체 목록으로 리셋
+  const handleResetToAll = () => {
+    setIsRandomMode(false);
   };
 
   // 신청 상태 확인
@@ -200,8 +203,26 @@ const TagGroupDetailPage: React.FC = () => {
       return;
     }
 
-    if (!userProfile.socialMedia?.instagram) {
-      setMessage({ type: 'error', text: '프로필에 인스타그램 계정을 먼저 등록해주세요.' });
+    // SNS별 계정 확인
+    const getSnsAccount = (snsType: import('../../models/TagGroup').SnsType) => {
+      switch (snsType) {
+        case 'instagram':
+          return userProfile.socialMedia?.instagram;
+        case 'youtube':
+          return userProfile.socialMedia?.youtube;
+        case 'naver':
+          return userProfile.socialMedia?.naver;
+        case 'ohouse':
+          return userProfile.socialMedia?.ohouse;
+        default:
+          return null;
+      }
+    };
+
+    const snsAccount = getSnsAccount(tagGroup.snsType);
+    if (!snsAccount) {
+      const snsLabels = SNS_TYPE_LABELS;
+      setMessage({ type: 'error', text: `프로필에 ${snsLabels[tagGroup.snsType]} 계정을 먼저 등록해주세요.` });
       return;
     }
 
@@ -209,7 +230,7 @@ const TagGroupDetailPage: React.FC = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      await applyToTagGroup(tagGroup.id, user.uid, userProfile.displayName, userProfile.socialMedia.instagram);
+      await applyToTagGroup(tagGroup.id, user.uid, userProfile.displayName, snsAccount!);
 
       // 태그 그룹 데이터 다시 로드
       const updatedGroup = await getTagGroup(tagGroup.id);
@@ -274,19 +295,22 @@ const TagGroupDetailPage: React.FC = () => {
   const isOwner = user && tagGroup.createdBy === user.uid;
   const applied = isApplied();
 
-  // 랜덤 10개 신청자 선택하여 인스타그램 태그 생성
-  const getRandomInstagramTags = (applications: TagGroup['applications']) => {
+  // 태그 생성 (전체 또는 랜덤 10명)
+  const getSNSTags = (applications: TagGroup['applications'], snsType: import('../../models/TagGroup').SnsType) => {
     if (applications.length === 0) return '';
 
-    // 배열을 섞어서 랜덤하게 정렬
-    const shuffled = [...applications].sort(() => 0.5 - Math.random());
-    // 최대 10개만 선택
-    const selected = shuffled.slice(0, Math.min(10, shuffled.length));
-
-    return generateInstagramTags(selected);
+    if (isRandomMode) {
+      // 랜덤 모드: 배열을 섞어서 랜덤하게 정렬 후 최대 10개 선택
+      const shuffled = [...applications].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, Math.min(10, shuffled.length));
+      return generateSNSTags(selected, snsType);
+    } else {
+      // 전체 모드: 모든 신청자의 태그 생성
+      return generateSNSTags(applications, snsType);
+    }
   };
 
-  const instagramTags = getRandomInstagramTags(tagGroup.applications);
+  const snsTags = getSNSTags(tagGroup.applications, tagGroup.snsType);
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -365,22 +389,39 @@ const TagGroupDetailPage: React.FC = () => {
         <Stack spacing={4}>
           {/* 기본 정보 */}
           <Box>
-            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
-              {tagGroup.name}
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+              <Typography variant="h5" sx={{ fontWeight: 600, flexGrow: 1 }}>
+                {tagGroup.name}
+              </Typography>
               <Chip
-                icon={<People />}
-                label={`${tagGroup.applications.length}명 신청`}
-                variant="outlined"
-                size="small"
+                label={SNS_TYPE_LABELS[tagGroup.snsType]}
+                sx={{
+                  backgroundColor: SNS_TYPE_COLORS[tagGroup.snsType],
+                  color: 'white',
+                  fontWeight: 600,
+                  ml: 2,
+                }}
               />
-              <Chip
-                icon={<CalendarToday />}
-                label={tagGroup.createdAt.toLocaleDateString()}
-                variant="outlined"
-                size="small"
-              />
+            </Box>
+            <Box sx={{ display: 'flex', gap: 3, mb: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <People sx={{ fontSize: 18, color: 'primary.main' }} />
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  {tagGroup.applications.length}명 신청
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Person sx={{ fontSize: 18, color: 'text.secondary' }} />
+                <Typography variant="body2" color="text.secondary">
+                  {tagGroup.createdByName || '익명'}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <CalendarToday sx={{ fontSize: 18, color: 'text.secondary' }} />
+                <Typography variant="body2" color="text.secondary">
+                  {tagGroup.createdAt.toLocaleDateString()}
+                </Typography>
+              </Box>
             </Box>
           </Box>
 
@@ -410,26 +451,32 @@ const TagGroupDetailPage: React.FC = () => {
           {tagGroup.applications.length > 0 && (
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="h6">인스타그램 태그</Typography>
+                <Typography variant="h6">
+                  {SNS_TYPE_LABELS[tagGroup.snsType]} 태그 생성 {isRandomMode && '(랜덤 10명)'}
+                </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                  <Tooltip title="새로고침 (랜덤 순서 변경)">
-                    <IconButton onClick={handleRefreshTags} size="small" color="primary">
-                      <Refresh />
-                    </IconButton>
-                  </Tooltip>
+                  {!isRandomMode ? (
+                    <Tooltip title="랜덤 10명 선택">
+                      <IconButton onClick={handleRandomMode} size="small" color="primary">
+                        <Casino />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title="전체 목록으로 리셋">
+                      <IconButton onClick={handleResetToAll} size="small" color="secondary">
+                        <Refresh />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                   <Tooltip title={copySuccess ? '복사됨!' : '클립보드에 복사'}>
-                    <IconButton
-                      onClick={handleCopyInstagramTags}
-                      color={copySuccess ? 'success' : 'primary'}
-                      size="small"
-                    >
+                    <IconButton onClick={handleCopySNSTags} color={copySuccess ? 'success' : 'primary'} size="small">
                       <ContentCopy />
                     </IconButton>
                   </Tooltip>
                 </Box>
               </Box>
               <TextField
-                value={instagramTags}
+                value={snsTags}
                 multiline
                 fullWidth
                 variant="outlined"
@@ -441,9 +488,9 @@ const TagGroupDetailPage: React.FC = () => {
                 }}
               />
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                {tagGroup.applications.length > 10
-                  ? `총 ${tagGroup.applications.length}명 중 랜덤으로 10명 선택하여 태그 생성`
-                  : `총 ${tagGroup.applications.length}명의 태그`}
+                {isRandomMode
+                  ? `총 ${tagGroup.applications.length}명 중 랜덤으로 ${Math.min(10, tagGroup.applications.length)}명 선택하여 ${SNS_TYPE_LABELS[tagGroup.snsType]} 태그 생성`
+                  : `총 ${tagGroup.applications.length}명의 ${SNS_TYPE_LABELS[tagGroup.snsType]} 태그`}
               </Typography>
             </Box>
           )}

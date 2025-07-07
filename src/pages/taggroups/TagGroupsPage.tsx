@@ -11,25 +11,29 @@ import {
   Chip,
   CircularProgress,
   Alert,
-  Fab,
   Stack,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@mui/material';
-import { Add, People, CalendarToday, PersonAdd, PersonRemove } from '@mui/icons-material';
+import { Add, People, PersonAdd, PersonRemove, Person, CalendarToday } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getActiveTagGroups, applyToTagGroup, cancelTagGroupApplication } from '../../services/tagGroupService';
 import { getUserProfile } from '../../services/userService';
 import type { TagGroup } from '../../models/TagGroup';
 import type { UserProfile } from '../../models/User';
+import { SnsType, SNS_TYPE_LABELS, SNS_TYPE_COLORS } from '../../models/TagGroup';
 
 const TagGroupsPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [tagGroups, setTagGroups] = useState<TagGroup[]>([]);
+  const [filteredTagGroups, setFilteredTagGroups] = useState<TagGroup[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [applyingStates, setApplyingStates] = useState<Record<string, boolean>>({});
   const [error, setError] = useState('');
+  const [selectedSnsType, setSelectedSnsType] = useState<SnsType | 'all'>('all');
 
   // 태그 그룹 목록 및 사용자 프로필 로드
   useEffect(() => {
@@ -46,6 +50,22 @@ const TagGroupsPage: React.FC = () => {
 
     loadData();
   }, [user]);
+
+  // SNS 타입별 필터링
+  useEffect(() => {
+    if (selectedSnsType === 'all') {
+      setFilteredTagGroups(tagGroups);
+    } else {
+      setFilteredTagGroups(tagGroups.filter((group) => group.snsType === selectedSnsType));
+    }
+  }, [tagGroups, selectedSnsType]);
+
+  // SNS 타입 필터 변경
+  const handleSnsTypeChange = (event: React.MouseEvent<HTMLElement>, newSnsType: SnsType | 'all') => {
+    if (newSnsType !== null) {
+      setSelectedSnsType(newSnsType);
+    }
+  };
 
   // 신청 상태 확인
   const isApplied = (tagGroup: TagGroup): boolean => {
@@ -126,8 +146,31 @@ const TagGroupsPage: React.FC = () => {
       </Box>
 
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-        체험단, 이벤트 등 다양한 인스타그램 태그 그룹을 만들고 관리해보세요.
+        체험단, 이벤트 등 다양한 SNS 태그 그룹을 만들고 관리해보세요.
       </Typography>
+
+      {/* SNS 타입 필터 */}
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+          SNS 플랫폼 필터
+        </Typography>
+        <ToggleButtonGroup
+          value={selectedSnsType}
+          exclusive
+          onChange={handleSnsTypeChange}
+          aria-label="SNS 타입 필터"
+          size="small"
+        >
+          <ToggleButton value="all" aria-label="전체">
+            전체
+          </ToggleButton>
+          {Object.entries(SNS_TYPE_LABELS).map(([value, label]) => (
+            <ToggleButton key={value} value={value} aria-label={label}>
+              {label}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </Box>
 
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
@@ -135,13 +178,17 @@ const TagGroupsPage: React.FC = () => {
         </Alert>
       )}
 
-      {tagGroups.length === 0 ? (
+      {filteredTagGroups.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <Typography variant="h6" color="text.secondary" gutterBottom>
-            아직 생성된 태그 그룹이 없습니다
+            {selectedSnsType === 'all'
+              ? '아직 생성된 태그 그룹이 없습니다'
+              : `선택한 SNS 플랫폼에 해당하는 태그 그룹이 없습니다`}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            첫 번째 태그 그룹을 만들어보세요
+            {selectedSnsType === 'all'
+              ? '첫 번째 태그 그룹을 만들어보세요'
+              : '다른 SNS 플랫폼을 선택하거나 새로운 태그 그룹을 만들어보세요'}
           </Typography>
           <Button variant="contained" startIcon={<Add />} onClick={handleCreateTagGroup} size="large">
             태그 그룹 생성
@@ -149,7 +196,7 @@ const TagGroupsPage: React.FC = () => {
         </Box>
       ) : (
         <Grid container spacing={3}>
-          {tagGroups.map((tagGroup) => {
+          {filteredTagGroups.map((tagGroup) => {
             const applied = isApplied(tagGroup);
             const isOwner = user && tagGroup.createdBy === user.uid;
             const isApplying = applyingStates[tagGroup.id] || false;
@@ -172,9 +219,11 @@ const TagGroupsPage: React.FC = () => {
                   onClick={() => handleCardClick(tagGroup.id)}
                 >
                   <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                      {tagGroup.name}
-                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 600, flexGrow: 1 }}>
+                        {tagGroup.name}
+                      </Typography>
+                    </Box>
 
                     {tagGroup.description && (
                       <Typography
@@ -194,21 +243,36 @@ const TagGroupsPage: React.FC = () => {
                     )}
 
                     <Stack spacing={2}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <People sx={{ fontSize: 20, color: 'primary.main' }} />
-                        <Typography variant="body2">{tagGroup.applications.length}명 신청</Typography>
-                      </Box>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <CalendarToday sx={{ fontSize: 20, color: 'text.secondary' }} />
-                        <Typography variant="body2" color="text.secondary">
-                          {tagGroup.createdAt.toLocaleDateString()}
-                        </Typography>
-                      </Box>
-
                       <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Chip
+                          label={SNS_TYPE_LABELS[tagGroup.snsType]}
+                          size="small"
+                          sx={{
+                            backgroundColor: SNS_TYPE_COLORS[tagGroup.snsType],
+                            color: 'white',
+                          }}
+                        />
                         {applied && <Chip label="신청함" color="primary" size="small" variant="outlined" />}
                         {isOwner && <Chip label="내 그룹" color="secondary" size="small" variant="outlined" />}
+                      </Box>
+
+                      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <People sx={{ fontSize: 18, color: 'primary.main' }} />
+                          <Typography variant="body2">{tagGroup.applications.length}명</Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <Person sx={{ fontSize: 18, color: 'text.secondary' }} />
+                          <Typography variant="body2" color="text.secondary">
+                            {tagGroup.createdByName || '익명'}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <CalendarToday sx={{ fontSize: 18, color: 'text.secondary' }} />
+                          <Typography variant="body2" color="text.secondary">
+                            {tagGroup.createdAt.toLocaleDateString()}
+                          </Typography>
+                        </Box>
                       </Box>
                     </Stack>
                   </CardContent>
@@ -229,26 +293,13 @@ const TagGroupsPage: React.FC = () => {
                               handleApply(tagGroup);
                             }
                           }}
-                          disabled={isApplying || !tagGroup.isActive}
+                          disabled={isApplying}
                           fullWidth
                           size="small"
                         >
                           {isApplying ? '처리 중...' : applied ? '신청 취소' : '신청하기'}
                         </Button>
                       )}
-
-                      {/* 상세보기 버튼 */}
-                      <Button
-                        variant="outlined"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCardClick(tagGroup.id);
-                        }}
-                        fullWidth
-                        size="small"
-                      >
-                        상세보기
-                      </Button>
                     </Stack>
                   </CardActions>
                 </Card>

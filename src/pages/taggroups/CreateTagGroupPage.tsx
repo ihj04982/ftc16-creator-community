@@ -8,14 +8,23 @@ import {
   Paper,
   Alert,
   CircularProgress,
-  FormControlLabel,
-  Switch,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { ArrowBack, Save } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { createTagGroup } from '../../services/tagGroupService';
 import { getUserProfile } from '../../services/userService';
+import { SnsType, SNS_TYPE_LABELS } from '../../models/TagGroup';
+
+interface FormData {
+  name: string;
+  description: string;
+  snsType: SnsType;
+}
 
 const CreateTagGroupPage: React.FC = () => {
   const { user } = useAuth();
@@ -23,10 +32,10 @@ const CreateTagGroupPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     description: '',
-    isActive: true,
+    snsType: SnsType.INSTAGRAM,
   });
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -65,7 +74,7 @@ const CreateTagGroupPage: React.FC = () => {
       await createTagGroup(user.uid, userProfile.displayName, userProfile.socialMedia.instagram || '', {
         name: formData.name.trim(),
         description: formData.description.trim(),
-        isActive: formData.isActive,
+        snsType: formData.snsType,
       });
 
       setMessage({ type: 'success', text: '태그 그룹이 성공적으로 생성되었습니다.' });
@@ -131,13 +140,20 @@ const CreateTagGroupPage: React.FC = () => {
               placeholder="태그 그룹에 대한 자세한 설명을 입력하세요"
             />
 
-            <FormControlLabel
-              control={
-                <Switch checked={formData.isActive} onChange={(e) => handleInputChange('isActive', e.target.checked)} />
-              }
-              label="활성화"
-              sx={{ alignSelf: 'flex-start' }}
-            />
+            <FormControl fullWidth>
+              <InputLabel>SNS 플랫폼</InputLabel>
+              <Select
+                value={formData.snsType}
+                onChange={(e) => handleInputChange('snsType', e.target.value as SnsType)}
+                label="SNS 플랫폼"
+              >
+                {Object.entries(SNS_TYPE_LABELS).map(([value, label]) => (
+                  <MenuItem key={value} value={value}>
+                    {label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
               <Button type="button" variant="outlined" onClick={handleBack} disabled={loading}>
