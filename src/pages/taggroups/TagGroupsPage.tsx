@@ -61,7 +61,7 @@ const TagGroupsPage: React.FC = () => {
   }, [tagGroups, selectedSnsType]);
 
   // SNS 타입 필터 변경
-  const handleSnsTypeChange = (event: React.MouseEvent<HTMLElement>, newSnsType: SnsType | 'all') => {
+  const handleSnsTypeChange = (newSnsType: SnsType | 'all') => {
     if (newSnsType !== null) {
       setSelectedSnsType(newSnsType);
     }
@@ -157,7 +157,7 @@ const TagGroupsPage: React.FC = () => {
         <ToggleButtonGroup
           value={selectedSnsType}
           exclusive
-          onChange={handleSnsTypeChange}
+          onChange={(_, newSnsType) => handleSnsTypeChange(newSnsType as SnsType | 'all')}
           aria-label="SNS 타입 필터"
           size="small"
         >
