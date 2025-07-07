@@ -10,6 +10,9 @@ import Dashboard from './pages/Dashboard';
 import ProfilePage from './pages/profile/ProfilePage';
 import MembersPage from './pages/members/MembersPage';
 import CreatorGuidePage from './pages/CreatorGuidePage';
+import TagGroupsPage from './pages/taggroups/TagGroupsPage';
+import CreateTagGroupPage from './pages/taggroups/CreateTagGroupPage';
+import TagGroupDetailPage from './pages/taggroups/TagGroupDetailPage';
 
 // 보호된 라우트 컴포넌트
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -113,6 +116,30 @@ function App() {
             element={
               <ProtectedRoute>
                 <CreatorGuidePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="taggroups"
+            element={
+              <ProtectedRoute>
+                <TagGroupsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="taggroups/create"
+            element={
+              <ProtectedRoute>
+                <CreateTagGroupPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="taggroups/:id"
+            element={
+              <ProtectedRoute>
+                <TagGroupDetailPage />
               </ProtectedRoute>
             }
           />
