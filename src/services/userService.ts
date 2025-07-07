@@ -12,7 +12,6 @@ export const getUserProfileWithAuthInfo = async (uid: string): Promise<UserProfi
     const profile = await getUserProfile(uid);
 
     if (!profile) {
-      console.log(`No profile found for user ${uid}`);
       return null;
     }
 

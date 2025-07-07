@@ -4,6 +4,7 @@ import {
   Person as UserIcon,
   MenuBook as GuideIcon,
   Tag as TagIcon,
+  Assignment as MissionIcon,
   Feedback as FeedbackIcon,
   BugReport as BugReportIcon,
   Lightbulb as LightbulbIcon,
@@ -19,6 +20,7 @@ const Dashboard = () => {
 
   const quickActions = [
     { icon: <UsersIcon />, label: '멤버 목록', path: '/members', color: 'primary.main' },
+    { icon: <MissionIcon />, label: '미션 센터', path: '/missions', color: 'error.main' },
     { icon: <UserIcon />, label: '내 프로필', path: '/profile', color: 'accent.main' },
     { icon: <GuideIcon />, label: '크리에이터 가이드', path: '/guide', color: 'secondary.main' },
     { icon: <TagIcon />, label: '태그 그룹', path: '/taggroups', color: 'warning.main' },
@@ -49,7 +51,7 @@ const Dashboard = () => {
               </Typography>
               <Grid container spacing={3} justifyContent="center">
                 {quickActions.map((action, index) => (
-                  <Grid size={{ xs: 12, sm: 6 }} key={index}>
+                  <Grid size={{ xs: 12, sm: 4 }} key={index}>
                     <Button
                       variant="outlined"
                       fullWidth

@@ -13,6 +13,7 @@ import CreatorGuidePage from './pages/CreatorGuidePage';
 import TagGroupsPage from './pages/taggroups/TagGroupsPage';
 import CreateTagGroupPage from './pages/taggroups/CreateTagGroupPage';
 import TagGroupDetailPage from './pages/taggroups/TagGroupDetailPage';
+import MissionCenterPage from './pages/MissionCenterPage';
 
 // 보호된 라우트 컴포넌트
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -108,6 +109,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <MembersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="missions"
+            element={
+              <ProtectedRoute>
+                <MissionCenterPage />
               </ProtectedRoute>
             }
           />

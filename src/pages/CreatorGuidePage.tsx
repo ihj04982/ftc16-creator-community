@@ -12,7 +12,7 @@ import {
   Divider,
   Alert,
 } from '@mui/material';
-import { School, Chat, MenuBook, Launch, Groups, MonetizationOn, Article, Quiz } from '@mui/icons-material';
+import { School, Chat, Launch, Groups, MonetizationOn, Article, Quiz } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 
 // 카카오톡 채널 데이터
@@ -256,29 +256,6 @@ const CreatorGuidePage: React.FC = () => {
               </Grid>
             ))}
           </Grid>
-        </Grid>
-
-        <Grid size={12}>
-          <Divider sx={{ my: 2 }} />
-        </Grid>
-
-        {/* 프로그램 자료 섹션 */}
-        <Grid size={12}>
-          <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 3 }}>
-            📚 프로그램 자료
-          </Typography>
-          <Card elevation={2} sx={{ p: 4 }}>
-            <Stack spacing={3} alignItems="center">
-              <MenuBook sx={{ fontSize: 48, color: 'primary.main' }} />
-              <Typography variant="h6" fontWeight={600} textAlign="center">
-                6주 프로그램 자료
-              </Typography>
-              <Typography variant="body1" color="text.secondary" textAlign="center">
-                현재 자료를 준비 중입니다. 곧 업데이트될 예정입니다.
-              </Typography>
-              <Chip label="준비 중" color="default" variant="outlined" sx={{ mt: 2 }} />
-            </Stack>
-          </Card>
         </Grid>
       </Grid>
 
