@@ -6,6 +6,7 @@ import {
   People as PeopleIcon,
   MenuBook as GuideIcon,
   LocalOffer as TagIcon,
+  Assignment as MissionIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 
@@ -55,11 +56,15 @@ const AppLayout = () => {
           >
             {/* Logo Section */}
             <Box
+              component={Link}
+              to="/dashboard"
               sx={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: { xs: 1, md: 2 },
                 flexShrink: 0,
+                textDecoration: 'none',
+                cursor: 'pointer',
               }}
             >
               <DashboardIcon
@@ -102,19 +107,6 @@ const AppLayout = () => {
               >
                 <Button
                   component={Link}
-                  to="/dashboard"
-                  startIcon={<DashboardIcon />}
-                  sx={{
-                    color: 'text.primary',
-                    '&:hover': {
-                      bgcolor: 'action.hover',
-                    },
-                  }}
-                >
-                  대시보드
-                </Button>
-                <Button
-                  component={Link}
                   to="/members"
                   startIcon={<PeopleIcon />}
                   sx={{
@@ -125,6 +117,19 @@ const AppLayout = () => {
                   }}
                 >
                   멤버
+                </Button>
+                <Button
+                  component={Link}
+                  to="/missions"
+                  startIcon={<MissionIcon />}
+                  sx={{
+                    color: 'text.primary',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  미션 센터
                 </Button>
                 <Button
                   component={Link}
@@ -167,19 +172,6 @@ const AppLayout = () => {
               >
                 <IconButton
                   component={Link}
-                  to="/dashboard"
-                  size="small"
-                  sx={{
-                    color: 'text.primary',
-                    '&:hover': {
-                      bgcolor: 'action.hover',
-                    },
-                  }}
-                >
-                  <DashboardIcon />
-                </IconButton>
-                <IconButton
-                  component={Link}
                   to="/members"
                   size="small"
                   sx={{
@@ -190,6 +182,19 @@ const AppLayout = () => {
                   }}
                 >
                   <PeopleIcon />
+                </IconButton>
+                <IconButton
+                  component={Link}
+                  to="/missions"
+                  size="small"
+                  sx={{
+                    color: 'text.primary',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  <MissionIcon />
                 </IconButton>
                 <IconButton
                   component={Link}
