@@ -53,6 +53,7 @@ const convertFirestoreUser = (doc: QueryDocumentSnapshot<DocumentData>): UserPro
     displayName: data.displayName || '',
     email: data.email || '',
     profilePhoto: data.profilePhoto || '',
+    isProfileComplete: data.isProfileComplete ?? false,
     bio: data.bio || '',
     activityField: data.activityField || '',
     socialMedia: data.socialMedia || {

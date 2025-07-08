@@ -182,6 +182,7 @@ const ProfilePage: React.FC = () => {
           bio: profileData.bio,
           activityField: profileData.activityField,
           socialMedia: profileData.socialMedia!,
+          isProfileComplete: true,
         });
       }
 
