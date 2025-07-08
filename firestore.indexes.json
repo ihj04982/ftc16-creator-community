@@ -39,6 +39,14 @@
         { "fieldPath": "userId", "order": "ASCENDING" },
         { "fieldPath": "missionId", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "isProfileComplete", "order": "ASCENDING" },
+        { "fieldPath": "displayName", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

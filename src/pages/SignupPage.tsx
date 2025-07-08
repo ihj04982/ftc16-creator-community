@@ -1,8 +1,23 @@
 import { useState } from 'react';
-import { Box, Typography, TextField, Button, Paper, Alert, Link, Stack } from '@mui/material';
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  Alert,
+  Link,
+  Stack,
+  Checkbox,
+  FormControlLabel,
+} from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowLeft, Home } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
+import { createUserProfile } from '../services/userService';
+
+const PRIVACY_VERSION = '2024.06.10';
+const PRIVACY_TEXT = `개인정보 수집·이용에 관한 동의\n\n(1) 수집항목: 이메일 주소, 오늘의집 닉네임, 인스타그램 주소 및 아이디, 유튜브·블로그 등 개인이 등록하는 주소 및 아이디\n\n(2) 수집목적: FTC 16기 프로그램 활동을 통한 FTC 16기 유저 간 SNS 상호 팔로우 등\n\n(3) 수집근거: 개인정보보호법 제15조\n\n(4) 보유 및 이용기간: 탈퇴 또는 FTC 16기 활동 종료 시까지`;
 
 const SignupPage = () => {
   const [email, setEmail] = useState('');
@@ -11,6 +26,7 @@ const SignupPage = () => {
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [agreePrivacy, setAgreePrivacy] = useState(false);
   const { signUp } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,8 +46,26 @@ const SignupPage = () => {
       return;
     }
 
+    if (!agreePrivacy) {
+      setError('개인정보 수집·이용에 동의해야 가입할 수 있습니다.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      await signUp(email, password, displayName);
+      const { user } = await signUp(email, password, displayName);
+      await createUserProfile(user.uid, {
+        displayName,
+        email,
+        socialMedia: {},
+        privacyConsent: {
+          agreed: true,
+          agreedAt: new Date(),
+          version: PRIVACY_VERSION,
+          method: 'signup',
+        },
+        isProfileComplete: false,
+      });
     } catch {
       setError('회원가입에 실패했습니다. 다시 시도해주세요.');
     } finally {
@@ -130,7 +164,24 @@ const SignupPage = () => {
                 autoComplete="new-password"
               />
 
-              <Button type="submit" variant="contained" size="large" fullWidth disabled={loading} sx={{ mt: 3, mb: 2 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox checked={agreePrivacy} onChange={(e) => setAgreePrivacy(e.target.checked)} required />
+                }
+                label={<span color="text.secondary">개인정보 수집·이용에 동의합니다.</span>}
+              />
+              <Typography variant="caption" color="text.secondary" sx={{ whiteSpace: 'pre-line', mb: 1, ml: 4 }}>
+                {PRIVACY_TEXT}
+              </Typography>
+
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                fullWidth
+                disabled={loading || !agreePrivacy}
+                sx={{ mt: 3, mb: 2 }}
+              >
                 {loading ? '가입 중...' : '회원가입'}
               </Button>
             </Stack>

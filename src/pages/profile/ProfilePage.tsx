@@ -18,12 +18,13 @@ import { getUserProfile, updateUserProfile, createUserProfile } from '../../serv
 import type { UserProfile, UpdateUserProfileData } from '../../models/User';
 
 const ProfilePage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, deleteAccount } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [deleting, setDeleting] = useState(false);
 
   // 폼 상태
   const [formData, setFormData] = useState({
@@ -181,6 +182,7 @@ const ProfilePage: React.FC = () => {
           bio: profileData.bio,
           activityField: profileData.activityField,
           socialMedia: profileData.socialMedia!,
+          isProfileComplete: true,
         });
       }
 
@@ -194,6 +196,24 @@ const ProfilePage: React.FC = () => {
       });
     }
     setSaving(false);
+  };
+
+  // 회원 탈퇴 처리
+  const handleDeleteAccount = async () => {
+    if (!window.confirm('정말로 회원 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
+    setDeleting(true);
+    setMessage({ type: '', text: '' });
+    try {
+      await deleteAccount();
+      setMessage({ type: 'success', text: '회원 탈퇴가 완료되었습니다.' });
+      navigate('/');
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: error instanceof Error ? error.message : '회원 탈퇴 중 오류가 발생했습니다.',
+      });
+    }
+    setDeleting(false);
   };
 
   if (loading) {
@@ -389,6 +409,11 @@ const ProfilePage: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
+      <Box sx={{ mt: 4, textAlign: 'center' }}>
+        <Button variant="outlined" color="error" onClick={handleDeleteAccount} disabled={deleting}>
+          {deleting ? '탈퇴 중...' : '회원 탈퇴'}
+        </Button>
+      </Box>
     </Container>
   );
 };
