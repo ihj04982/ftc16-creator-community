@@ -52,6 +52,7 @@ const convertFirestoreUser = (doc: QueryDocumentSnapshot<DocumentData>): UserPro
     },
     createdAt: data.createdAt?.toDate() || new Date(),
     updatedAt: data.updatedAt?.toDate() || new Date(),
+    privacyConsent: data.privacyConsent, // privacyConsent 필드 추가
   };
 };
 

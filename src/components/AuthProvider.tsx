@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   updateProfile,
+  deleteUser as firebaseDeleteUser,
 } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import { auth } from '../configs/firebaseConfigs';
@@ -35,10 +36,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signUp = async (email: string, password: string, displayName: string) => {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(user, { displayName });
+    return { user };
   };
 
   const logout = async () => {
     await signOut(auth);
+  };
+
+  const deleteAccount = async () => {
+    if (!auth.currentUser) throw new Error('로그인된 사용자가 없습니다.');
+    await firebaseDeleteUser(auth.currentUser);
   };
 
   const value = {
@@ -47,6 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     signIn,
     signUp,
     logout,
+    deleteAccount,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
