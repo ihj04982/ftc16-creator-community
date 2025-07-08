@@ -11,7 +11,7 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import { useEffect, useState } from 'react';
 import PrivacyConsentModal from '../components/PrivacyConsentModal';
-import { getUserProfile, updateUserProfile } from '../services/userService';
+import { getUserProfile, savePrivacyConsent } from '../services/userService';
 
 const PRIVACY_VERSION = '2024.06.10';
 
@@ -43,13 +43,11 @@ const AppLayout = () => {
     setModalLoading(true);
     setModalError(undefined);
     try {
-      await updateUserProfile(user.uid, {
-        privacyConsent: {
-          agreed: true,
-          agreedAt: new Date(),
-          version: PRIVACY_VERSION,
-          method: 'modal',
-        },
+      await savePrivacyConsent(user.uid, user.email || '', {
+        agreed: true,
+        agreedAt: new Date(),
+        version: PRIVACY_VERSION,
+        method: 'modal',
       });
       setModalOpen(false);
     } catch (e: unknown) {

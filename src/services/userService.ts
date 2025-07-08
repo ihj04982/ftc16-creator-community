@@ -1,7 +1,18 @@
-import { doc, setDoc, getDoc, updateDoc, collection, getDocs, query, orderBy, Timestamp } from 'firebase/firestore';
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  Timestamp,
+  where,
+} from 'firebase/firestore';
 import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import { db } from '../configs/firebaseConfigs';
-import type { UserProfile, CreateUserProfileData, UpdateUserProfileData } from '../models/User';
+import type { UserProfile, CreateUserProfileData, UpdateUserProfileData, PrivacyConsent } from '../models/User';
 
 const USERS_COLLECTION = 'users';
 
@@ -107,7 +118,7 @@ export const updateUserProfile = async (uid: string, userData: UpdateUserProfile
 export const getAllUsers = async (): Promise<UserProfile[]> => {
   try {
     const usersRef = collection(db, USERS_COLLECTION);
-    const q = query(usersRef, orderBy('displayName'));
+    const q = query(usersRef, where('isProfileComplete', '==', true), orderBy('displayName'));
     const querySnapshot = await getDocs(q);
 
     return querySnapshot.docs.map(convertFirestoreUser);
@@ -131,5 +142,25 @@ export const searchUsersByName = async (searchTerm: string): Promise<UserProfile
   } catch (error) {
     console.error('Error searching users:', error);
     throw new Error('사용자 검색 중 오류가 발생했습니다.');
+  }
+};
+
+// 개인정보 동의 저장 (UserProfile 없으면 최소 정보로 생성)
+export const savePrivacyConsent = async (uid: string, email: string, privacyConsent: PrivacyConsent) => {
+  const userRef = doc(db, USERS_COLLECTION, uid);
+  const userSnap = await getDoc(userRef);
+  if (userSnap.exists()) {
+    await updateDoc(userRef, {
+      privacyConsent,
+      updatedAt: Timestamp.now(),
+    });
+  } else {
+    await setDoc(userRef, {
+      email,
+      privacyConsent,
+      isProfileComplete: false,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
   }
 };

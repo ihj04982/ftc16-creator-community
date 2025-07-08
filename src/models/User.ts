@@ -23,7 +23,12 @@ export interface UserProfile {
   createdAt: Date;
   updatedAt: Date;
   privacyConsent?: PrivacyConsent; // 개인정보 수집 동의 정보
+  isProfileComplete: boolean; // 프로필 완성 여부
 }
 
-export type CreateUserProfileData = Omit<UserProfile, 'uid' | 'createdAt' | 'updatedAt'>;
-export type UpdateUserProfileData = Partial<Omit<UserProfile, 'uid' | 'email' | 'createdAt' | 'updatedAt'>>;
+export type CreateUserProfileData = Omit<UserProfile, 'uid' | 'createdAt' | 'updatedAt'> & {
+  isProfileComplete?: boolean;
+};
+export type UpdateUserProfileData = Partial<Omit<UserProfile, 'uid' | 'email' | 'createdAt' | 'updatedAt'>> & {
+  isProfileComplete?: boolean;
+};
