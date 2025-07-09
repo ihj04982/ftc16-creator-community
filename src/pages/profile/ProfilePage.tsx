@@ -167,6 +167,7 @@ const ProfilePage: React.FC = () => {
           youtube: formData.socialMedia.youtube.trim(),
           naver: formData.socialMedia.naver.trim(),
         },
+        isProfileComplete: true,
       };
 
       if (profile) {
