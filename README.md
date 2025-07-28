@@ -1,122 +1,55 @@
 # FTC16 Creator Community
 
-A community platform for FTC Team 16 creators, built with React, TypeScript, and Vite.
+Firebase와 React로 제작된 오늘의집 FTC16기 크리에이터 협업 플랫폼입니다.
 
-## Getting Started
+## 🌐 라이브 데모
 
-This project uses Vite for fast development and hot module replacement.
+**라이브 데모**: [https://ftc16-creator-community.vercel.app/](https://ftc16-creator-community.vercel.app/)
 
-### Prerequisites
+## ✨ 주요 기능
 
-- Node.js (v14 or higher)
-- npm or yarn
+### 🔐 인증 시스템
 
-### Installation
+- Firebase Authentication을 통한 이메일/비밀번호 로그인
+- 회원가입 및 로그인 기능
+- 개인정보 수집 동의 관리
 
-1. Clone the repository
+### 👥 멤버 관리
 
-```bash
-git clone https://github.com/ihj04982/ftc16-creator-community.git
-cd ftc16-creator-community
-```
+- 크리에이터 프로필 관리
+- 소셜 미디어 계정 연동 (오늘의집, 인스타그램, 유튜브, 네이버 블로그)
+- 멤버 목록 조회
 
-2. Install dependencies
+### 🎯 미션 시스템
 
-```bash
-npm install
-```
+- 주차별 미션 관리
+- 미션 진행 상황 추적
+- 미션 완료율 통계
+- 미션 센터를 통한 중앙 집중식 관리
 
-3. Start the development server
+### 🏷️ 태그 그룹 관리
 
-```bash
-npm run dev
-```
+- SNS 플랫폼별 태그 그룹 생성
+- 태그 그룹 신청 및 관리
 
-## Tech Stack
+### 📱 반응형 디자인
 
-- **React** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
-- **ESLint** - Code linting
+- Material-UI 기반의 UI
+- 모바일 및 데스크톱 최적화
+- 직관적인 사용자 경험
 
-## Development
+## 🛠️ 기술 스택
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Frontend
 
-Currently, two official plugins are available:
+- **React 19** - 최신 React 버전
+- **TypeScript** - 타입 안정성
+- **Vite** - 빠른 개발 환경
+- **Material-UI (MUI)** - UI 컴포넌트 라이브러리
+- **React Router DOM** - 클라이언트 사이드 라우팅
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Backend & Database
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License.
+- **Firebase** - 인증 및 데이터베이스
+- **Firestore** - NoSQL 데이터베이스
+- **Firebase Authentication** - 사용자 인증
